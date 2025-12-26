@@ -75,6 +75,7 @@ def test(features, adj, labels, idx_test):
     #return accuracy and f1 score
     return acc_test.item(), f
 
+# predict也没用，主要用在了args.mode == 1的时候
 def predict(features, adj, sample, idx):
     '''
     :param features: the omics features
@@ -218,3 +219,4 @@ if __name__ == '__main__':
 
 
     print('Finished!')
+
