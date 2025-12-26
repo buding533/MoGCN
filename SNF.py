@@ -18,6 +18,7 @@ if __name__ == '__main__':
                         'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean',
                         'sokalmichener', 'sokalsneath', 'sqeuclidean', 'wminkowski', 'yule'], default='sqeuclidean',
                         help='Distance metric to compute. Must be one of available metrics in :py:func scipy.spatial.distance.pdist.')
+    #KNN图的邻居数，可做实验（10-30）
     parser.add_argument('--K', '-k', type=int, default=20,
                         help='(0, N) int, number of neighbors to consider when creating affinity matrix. See Notes of :py:func snf.compute.affinity_matrix for more details. Default: 20.')
     parser.add_argument('--mu', '-mu', type=int, default=0.5,
@@ -43,10 +44,11 @@ if __name__ == '__main__':
     omics_data_2.sort_values(by='Sample', ascending=True, inplace=True)
     omics_data_3.sort_values(by='Sample', ascending=True, inplace=True)
 
+    # 构建每个组学的相似融合网络
     print('Start similarity network fusion...')
     affinity_nets = snf.make_affinity([omics_data_1.iloc[:, 1:].values.astype(np.float), omics_data_2.iloc[:, 1:].values.astype(np.float), omics_data_3.iloc[:, 1:].values.astype(np.float)],
                                       metric=args.metric, K=args.K, mu=args.mu)
-
+    # 将三个相似融合网络融合为一个
     fused_net =snf.snf(affinity_nets, K=args.K)
 
     print('Save fused adjacency matrix...')
@@ -58,4 +60,5 @@ if __name__ == '__main__':
     np.fill_diagonal(fused_df.values, 0)
     fig = sns.clustermap(fused_df.iloc[:, :], cmap='vlag', figsize=(8,8),)
     fig.savefig('result/SNF_fused_clustermap.png', dpi=300)
+
     print('Success! Results can be seen in result file')
