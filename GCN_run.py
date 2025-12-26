@@ -135,6 +135,7 @@ if __name__ == '__main__':
 
     print('Begin training model...')
 
+    # 0代表数据集分成十份进行交叉验证，其中九份为训练集，一份未测试集；1代表原文固定的一部分为测试集，其余为训练集，与我没用
     # 10-fold cross validation
     if args.mode == 0:
         skf = StratifiedKFold(n_splits=10, shuffle=True)
@@ -214,5 +215,6 @@ if __name__ == '__main__':
         print('The best epoch model is ',best_epoch)
         GCN_model.load_state_dict(torch.load('model/GCN/{}.pkl'.format(best_epoch)))
         predict(features, adj, all_sample, test_idx)
+
 
     print('Finished!')
